@@ -25,6 +25,7 @@ public:
 	virtual void PreInitializeComponents() override;
 
 	void ReturnNewData(FCustomPoseData* NewData);
+    //void ReturnNewData(TArray<uint8> *NewData);
 
 private:
 
@@ -32,4 +33,5 @@ private:
 	class UUDP_Component* OurCommunicationComponent;
 	
 	FCustomPoseData ReceivedData;
+    //TArray<uint8> ReceivedData;
 };

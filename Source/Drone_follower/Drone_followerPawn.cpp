@@ -54,7 +54,7 @@ ADrone_followerPawn::ADrone_followerPawn()
 	
 	//Attach Spring Arm to root component
 	CameraSpringArm->SetupAttachment(RootComponent);
-	CameraSpringArm->SetRelativeLocation(FVector(-200.0f, 0.0f, 100.0f));
+	CameraSpringArm->SetRelativeLocation(FVector(-130.0f, 0.0f, 100.0f));
 	CameraSpringArm->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
 	CameraSpringArm->TargetArmLength = 300.0f;
 	// Decouple the some rotationale movement of the Pawn from the movement of the camera
@@ -107,8 +107,9 @@ ADrone_followerPawn::ADrone_followerPawn()
 void ADrone_followerPawn::PreInitializeComponents()
 {
 	Super::PreInitializeComponents();
-	ScreenMsg("Starting UDP Component");
+	//ScreenMsg("Starting UDP Component");
 	OurCommunicationComponent->StartUDPComm("PawnCommunicationComponent");
+	CaptureCamera->InitCommunication();
 }
 
 // Called when the game starts or when spawned
@@ -118,7 +119,7 @@ void ADrone_followerPawn::BeginPlay()
 
 	if (GEngine)
 	{
-		ScreenMsg("Drone Pawn Spawned");
+		//ScreenMsg("Drone Pawn Spawned");
 	}
 }
 
@@ -199,6 +200,7 @@ void ADrone_followerPawn::GetPose(FRotator* Att, FVector* Pos)
 	Pos->Y = 100 * RecvdData.drone_Y;
 	Pos->Z = -100 * RecvdData.drone_Z;
 
+    //ScreenMsg("X: ",RecvdData.ball_X);
 	/*
 	Rotation->Roll = 0;
 	Rotation->Pitch = 0;

@@ -34,7 +34,8 @@ public:
 	void Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt);
 
 	// Retrieve Data
-	void GetData(FCustomPoseData* RetData);
+	//void GetData(FCustomPoseData* RetData);
+    void GetData(TArray<uint8>* RetData);
 
 	// Send Data
 	int SendData(TArray<uint8> Array);
@@ -58,8 +59,8 @@ private:
 	TSharedPtr<FInternetAddr> RemoteAddr;
 
 	// Received Data
-	//TArray<uint8> DataIn;
-	FCustomPoseData DataIn;
+	TArray<uint8> DataIn;
+	//FCustomPoseData DataIn;
 
 	// Output Data
 	TArray<uint8> DataOut;

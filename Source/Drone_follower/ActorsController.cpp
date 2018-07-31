@@ -30,9 +30,19 @@ void AActorsController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    TArray<uint8> tmp;
+    int i;
+    
 	// Get Data
-	OurCommunicationComponent->GetData(&ReceivedData);	//Store in a local variable the received data
+	OurCommunicationComponent->GetData(&tmp);	//Store in a local variable the received data
 
+    //Byte to byte copy of the struct
+    for (i = 0; i < sizeof(struct FCustomPoseData); i++)
+    {
+        *((uint8*)(&ReceivedData) + i) = tmp[i];
+    }
+    
+    ScreenMsg("ReturnNewData: ", ReceivedData.ball_X);
 	//Serialize received data
 	/*for (i = 0; i < sizeof(struct FCustomPoseData); i++){
 		*((uint8*)(&VehiclePose) + i) = ReceivedData[i];
@@ -40,6 +50,7 @@ void AActorsController::Tick(float DeltaTime)
 }
 
 void AActorsController::ReturnNewData(FCustomPoseData *NewData) {
+//void AActorsController::ReturnNewData(TArray<uint8> *NewData){
 	*NewData = ReceivedData;
 }
 

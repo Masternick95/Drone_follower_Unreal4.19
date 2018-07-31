@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
 #include "UDP_Component.h"
+#include <cstdio>
+#include <iostream>
+#include <string>
 
 #include "Messages.h"
 #include "CustomData.h"
@@ -21,7 +23,7 @@ DestIP_Address(FString("127.0.0.1")), PortOut(9000)
 	ListenSocket = NULL;
 	SendSocket = NULL;
 
-	//DataIn.Init(0, sizeof(struct FCustomPoseData));
+	DataIn.Init(0, sizeof(struct FCustomPoseData));
 	DataOut.Init(0, sizeof(struct FCustomImpactData));
 }
 
@@ -29,11 +31,11 @@ DestIP_Address(FString("127.0.0.1")), PortOut(9000)
 // Initialize the communication
 bool UUDP_Component::StartUDPComm(const FString& YourChosenSocketName)
 {
-	ScreenMsg("SOCKETS INIT");
-	ScreenMsg("Source IP = ", SourceIP_Address);
-	ScreenMsg("Source Port = ", PortIn);
-	ScreenMsg("Destination IP = ", DestIP_Address);
-	ScreenMsg("Destination Port = ", PortOut);
+	//ScreenMsg("SOCKETS INIT");
+	//ScreenMsg("Source IP = ", SourceIP_Address);
+	//ScreenMsg("Source Port = ", PortIn);
+	//ScreenMsg("Destination IP = ", DestIP_Address);
+	//ScreenMsg("Destination Port = ", PortOut);
 
 	FIPv4Address SourceAddr, DestAddr;
 
@@ -95,18 +97,34 @@ bool UUDP_Component::StartUDPComm(const FString& YourChosenSocketName)
 */
 void UUDP_Component::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt)
 {
-	//ScreenMsg("Received bytes", ArrayReaderPtr->Num());
-	//ArrayReaderPtr->Serialize(DataIn.GetData(), ArrayReaderPtr->Num());
-	*ArrayReaderPtr << DataIn;
+    //*ArrayReaderPtr << DataIn; // old code
+    
+    ArrayReaderPtr->Serialize(DataIn.GetData(), ArrayReaderPtr->Num());
+    
+    /*ScreenMsg("Received bytes", ArrayReaderPtr->Num());
+    //other methods
+    unsigned char* RawData = ArrayReaderPtr->GetData();
+    FString temp((char*)RawData);
+    TArray<uint8> RawData2(ArrayReaderPtr->GetData(), ArrayReaderPtr->Num());
+    
+    FString outString = BytesToString(ArrayReaderPtr->GetData(), ArrayReaderPtr->Num());
+    ScreenMsg("Received msg: " + outString);
+    
+    std::sscanf(TCHAR_TO_ANSI(*outString), "(%f, %f, %f), (%f, %f, %f), (%f, %f, %f)", &DataIn.drone_X, &DataIn.drone_Y, &DataIn.drone_Z, &DataIn.drone_Roll, &DataIn.drone_Pitch, &DataIn.drone_Yaw, &DataIn.ball_X, &DataIn.ball_Y, &DataIn.ball_Z);*/
+    //ScreenMsg("Received X: ", DataIn.ball_X);
 }
 
 /**
 * Return the retrieved data
 */
-void UUDP_Component::GetData(FCustomPoseData* RetData)
+//void UUDP_Component::GetData(FCustomPoseData* RetData)
+void UUDP_Component::GetData(TArray<uint8>* RetData)
 {
 	*RetData = DataIn;
-	//ScreenMsg("Value", *((float*)(RetData->GetData()) + 3));
+    //ScreenMsg("DataIn: ", DataIn.ball_X);
+    //ScreenMsg("RetData: ", RetData->ball_X);
+    //ScreenMsg("Get data: ", *((float*)(RetData->GetData()) + 3));
+    //ScreenMsg("Get data: ", RetData->drone_X);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -115,8 +133,13 @@ void UUDP_Component::GetData(FCustomPoseData* RetData)
 int UUDP_Component::SendData(TArray<uint8> Array)
 {
 	int32 byteSent = 0;
-
+	//ScreenMsg("GetData: ", Array.GetData());
+	//ScreenMsg("Num: ", Array.Num());
+	//ScreenMsg("Remote Addr: ", RemoteAddr.Get()->ToString(true));
+	
 	SendSocket->SendTo(Array.GetData(), Array.Num(), byteSent, *RemoteAddr);
+	
+	//ScreenMsg("SendData()");
 
 	return byteSent;
 }

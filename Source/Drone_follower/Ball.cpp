@@ -16,6 +16,7 @@ ABall::ABall()
 
 	//Instantiate static mesh component
 	BallVisibleComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BallVisibleComponent"));
+    //ScreenMsg("Ball radius: ", BallVisibleComponent->Bounds.SphereRadius);
 
 	//Get actor controller pointer
 	//Get ActorsController pointer for receiving position
@@ -30,7 +31,7 @@ ABall::ABall()
 void ABall::BeginPlay()
 {
 	Super::BeginPlay();
-	SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
+	//SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
 }
 
 // Called every frame
@@ -41,6 +42,7 @@ void ABall::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	ActorController->ReturnNewData(&NewData);
+    ScreenMsg("New data ball X = ", NewData.ball_X);
 	SetPose(&NewData);
 }
 
@@ -52,5 +54,5 @@ void ABall::SetPose(FCustomPoseData* ReceivedData) {
 	Position.Y = 100 * ReceivedData->ball_Y;
 	Position.Z = 100 * ReceivedData->ball_Z;
 
-	SetActorLocation(Position);
+	//SetActorLocation(Position);
 }
